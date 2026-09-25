@@ -20,7 +20,7 @@ public class EmailService {
             Resend resend = new Resend(resendApiKey);
 
             CreateEmailOptions params = CreateEmailOptions.builder()
-                    .from("onboarding@resend.dev")
+                    .from("noreply@electo.com")
                     .to(toEmail)
                     .subject("Electo - Your OTP")
                     .html(
