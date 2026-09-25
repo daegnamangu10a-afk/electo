@@ -1,41 +1,47 @@
 package com.electo.electo;
 
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import com.resend.Resend;
+import com.resend.core.exception.ResendException;
+import com.resend.services.emails.model.CreateEmailOptions;
 
 @Service
 public class EmailService {
 
-    private final JavaMailSender mailSender;
-
-    public EmailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
+    @Value("${resend.api.key}")
+    private String resendApiKey;
 
     public void sendOTP(String toEmail, String otp) {
 
-        System.out.println("Preparing email...");
-        System.out.println("Sending OTP to: " + toEmail);
+        try {
 
-        SimpleMailMessage message = new SimpleMailMessage();
+            Resend resend = new Resend(resendApiKey);
 
-        message.setTo(toEmail);
-        message.setSubject("Electo - Your OTP");
+            CreateEmailOptions params = CreateEmailOptions.builder()
+                    .from("onboarding@resend.dev")
+                    .to(toEmail)
+                    .subject("Electo - Your OTP")
+                    .html(
+                            "<h2>Electo - Election Management System</h2>" +
+                            "<p>Your One-Time Password (OTP) is:</p>" +
+                            "<h1>" + otp + "</h1>" +
+                            "<p>This OTP is valid for 5 minutes.</p>" +
+                            "<p>Please do not share this OTP with anyone.</p>"
+                    )
+                    .build();
 
-        message.setText(
-                "Hello,\n\n" +
-                "Your Electo verification OTP is:\n\n" +
-                otp +
-                "\n\n" +
-                "This OTP is valid for a limited time.\n\n" +
-                "Do not share this OTP with anyone.\n\n" +
-                "Regards,\n" +
-                "Electo Election Management System"
-        );
+            resend.emails().send(params);
 
-        mailSender.send(message);
+            System.out.println("OTP email sent successfully to: " + toEmail);
 
-        System.out.println("Email sent successfully!");
+        } catch (ResendException e) {
+
+            System.out.println("Failed to send OTP email.");
+            e.printStackTrace();
+
+            throw new RuntimeException("Failed to send OTP email", e);
+        }
     }
 }
