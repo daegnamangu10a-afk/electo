@@ -1,8 +1,10 @@
-package com.electo.electo;
+package com.electo.electo.repository;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.electo.electo.entity.Vote;
 
 public interface VoteRepository extends JpaRepository<Vote, Long> {
 

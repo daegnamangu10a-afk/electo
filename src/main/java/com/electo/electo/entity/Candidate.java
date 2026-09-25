@@ -1,4 +1,4 @@
-package com.electo.electo;
+package com.electo.electo.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

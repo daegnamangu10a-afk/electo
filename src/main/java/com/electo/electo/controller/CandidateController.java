@@ -1,4 +1,4 @@
-package com.electo.electo;
+package com.electo.electo.controller;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.electo.electo.entity.Candidate;
+import com.electo.electo.repository.CandidateRepository;
 
 @RestController
 @RequestMapping("/api/candidates")

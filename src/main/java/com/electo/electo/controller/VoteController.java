@@ -1,4 +1,4 @@
-package com.electo.electo;
+package com.electo.electo.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,6 +10,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.electo.electo.entity.Candidate;
+import com.electo.electo.entity.Election;
+import com.electo.electo.entity.Position;
+import com.electo.electo.entity.Vote;
+import com.electo.electo.repository.CandidateRepository;
+import com.electo.electo.repository.ElectionRepository;
+import com.electo.electo.repository.PositionRepository;
+import com.electo.electo.repository.VoteRepository;
+import com.electo.electo.repository.VoterRepository;
 
 @RestController
 @RequestMapping("/api/votes")
