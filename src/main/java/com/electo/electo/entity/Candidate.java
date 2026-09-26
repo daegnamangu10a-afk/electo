@@ -1,12 +1,15 @@
 package com.electo.electo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Lob;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 public class Candidate {
@@ -23,10 +26,14 @@ public class Candidate {
 
     private Long positionId;
 
+    // Path to either an existing uploaded file or the database photo endpoint.
     private String photo;
 
-    @Lob
+    // PostgreSQL bytea, not a PostgreSQL Large Object (oid).
+    // Nullable because a candidate may have no photo.
     @JsonIgnore
+    @JdbcTypeCode(SqlTypes.VARBINARY)
+    @Column(columnDefinition = "bytea")
     private byte[] data;
 
     private String photoContentType;
@@ -34,160 +41,75 @@ public class Candidate {
     @Column(columnDefinition = "TEXT")
     private String biography;
 
-
-    // =========================================================
-    // CONSTRUCTOR
-    // =========================================================
-
     public Candidate() {
     }
-
-
-    // =========================================================
-    // GET ID
-    // =========================================================
 
     public Long getId() {
         return id;
     }
 
-
-    // =========================================================
-    // GET NAME
-    // =========================================================
-
     public String getName() {
         return name;
     }
-
-
-    // =========================================================
-    // SET NAME
-    // =========================================================
 
     public void setName(String name) {
         this.name = name;
     }
 
-
-    // =========================================================
-    // GET EMAIL
-    // =========================================================
-
     public String getEmail() {
         return email;
     }
-
-
-    // =========================================================
-    // SET EMAIL
-    // =========================================================
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-
-    // =========================================================
-    // GET ELECTION ID
-    // =========================================================
-
     public Long getElectionId() {
         return electionId;
     }
-
-
-    // =========================================================
-    // SET ELECTION ID
-    // =========================================================
 
     public void setElectionId(Long electionId) {
         this.electionId = electionId;
     }
 
-
-    // =========================================================
-    // GET POSITION ID
-    // =========================================================
-
     public Long getPositionId() {
         return positionId;
     }
-
-
-    // =========================================================
-    // SET POSITION ID
-    // =========================================================
 
     public void setPositionId(Long positionId) {
         this.positionId = positionId;
     }
 
-
-    // =========================================================
-    // GET PHOTO
-    // =========================================================
-
     public String getPhoto() {
         return photo;
     }
-
-
-    // =========================================================
-    // SET PHOTO
-    // =========================================================
 
     public void setPhoto(String photo) {
         this.photo = photo;
     }
 
-
-    // =========================================================
-    // GET BIOGRAPHY
-    // =========================================================
-
-    public String getBiography() {
-        return biography;
-    }
-
-
-    // =========================================================
-    // SET BIOGRAPHY
-    // =========================================================
-
-    public void setBiography(String biography) {
-        this.biography = biography;
-    }
-
-    // =========================================================
-    // GET DATA
-    // =========================================================
     @JsonIgnore
     public byte[] getData() {
         return data;
     }
 
-    // =========================================================
-    // SET DATA
-    // =========================================================
-
     public void setData(byte[] data) {
         this.data = data;
     }
-
-    // =========================================================
-    // GET PHOTOCONTENT
-    // =========================================================
 
     public String getPhotoContentType() {
         return photoContentType;
     }
 
-    // =========================================================
-    // SET PHOTOCONTENT
-    // =========================================================
-
     public void setPhotoContentType(String photoContentType) {
         this.photoContentType = photoContentType;
+    }
+
+    public String getBiography() {
+        return biography;
+    }
+
+    public void setBiography(String biography) {
+        this.biography = biography;
     }
 }
