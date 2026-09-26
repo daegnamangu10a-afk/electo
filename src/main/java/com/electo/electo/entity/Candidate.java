@@ -23,6 +23,12 @@ public class Candidate {
 
     private String photo;
 
+    @Lob
+    @JsonIgnore
+    private byte[] data;
+
+    private String photoContentType;
+
     @Column(columnDefinition = "TEXT")
     private String biography;
 
@@ -151,4 +157,35 @@ public class Candidate {
         this.biography = biography;
     }
 
+    // =========================================================
+    // GET DATA
+    // =========================================================
+    @JsonIgnore
+    public byte[] getData() {
+        return data;
+    }
+
+    // =========================================================
+    // SET DATA
+    // =========================================================
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
+    // =========================================================
+    // GET PHOTOCONTENT
+    // =========================================================
+
+    public String getPhotoContentType() {
+        return photoContentType;
+    }
+
+    // =========================================================
+    // SET PHOTOCONTENT
+    // =========================================================
+
+    public void setPhotoContentType(String photoContentType) {
+        this.photoContentType = photoContentType;
+    }
 }
