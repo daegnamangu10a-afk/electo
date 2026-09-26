@@ -1,6 +1,7 @@
 package com.electo.electo.controller;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -48,7 +49,7 @@ public class VoteController {
 
     @PostMapping
     public ResponseEntity<?> castVote(
-            @RequestBody Vote vote) {
+        @RequestBody Vote vote) {
 
         if (vote.getVoterId() == null) {
             return ResponseEntity.badRequest()
@@ -138,18 +139,18 @@ public class VoteController {
 
         boolean alreadyVoted =
                 voteRepository
-                        .existsByVoterIdAndElectionIdAndPositionId(
-                                vote.getVoterId(),
-                                vote.getElectionId(),
-                                vote.getPositionId()
-                        );
+                .existsByVoterIdAndElectionIdAndPositionId(
+                        vote.getVoterId(),
+                        vote.getElectionId(),
+                        vote.getPositionId()
+                );
 
         if (alreadyVoted) {
             return ResponseEntity.badRequest()
                     .body("You have already voted for this position.");
         }
 
-        vote.setVotedAt(LocalDateTime.now());
+        vote.setVotedAt(now);
 
         Vote savedVote = voteRepository.save(vote);
 
