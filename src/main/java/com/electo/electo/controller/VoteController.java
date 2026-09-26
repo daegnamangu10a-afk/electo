@@ -84,7 +84,15 @@ public class VoteController {
                     .body("Election not found.");
         }
 
-        if (!"ACTIVE".equalsIgnoreCase(election.getStatus())) {
+        LocalDateTime now = LocalDateTime.now(
+                ZoneId.of("Asia/Kolkata")
+        );
+
+        if (election.getStartTime() == null ||
+                election.getEndTime() == null ||
+                now.isBefore(election.getStartTime()) ||
+                now.isAfter(election.getEndTime())) {
+
             return ResponseEntity.badRequest()
                     .body("Voting is not currently active for this election.");
         }
