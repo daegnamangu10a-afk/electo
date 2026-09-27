@@ -1,6 +1,7 @@
 package com.electo.electo.entity;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -65,7 +66,7 @@ public class Election {
     @Transient
     public String getStatus() {
 
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
 
         if (startTime != null && now.isBefore(startTime)) {
             return "UPCOMING";
