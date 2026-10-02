@@ -5,6 +5,7 @@ import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import com.electo.electo.entity.Candidate;
 import com.electo.electo.entity.Election;
 import com.electo.electo.entity.Position;
 import com.electo.electo.entity.Vote;
+import com.electo.electo.entity.Voter;
 import com.electo.electo.repository.CandidateRepository;
 import com.electo.electo.repository.ElectionRepository;
 import com.electo.electo.repository.PositionRepository;
@@ -26,6 +28,9 @@ import com.electo.electo.repository.VoterRepository;
 @RequestMapping("/api/votes")
 @CrossOrigin(origins = "*")
 public class VoteController {
+
+    private static final ZoneId ELECTION_ZONE =
+            ZoneId.of("Asia/Kolkata");
 
     private final VoteRepository voteRepository;
     private final ElectionRepository electionRepository;
@@ -71,7 +76,11 @@ public class VoteController {
                     .body("Candidate ID is required.");
         }
 
-        if (!voterRepository.existsById(vote.getVoterId())) {
+        Voter voter = voterRepository
+                .findById(vote.getVoterId())
+                .orElse(null);
+
+        if (voter == null) {
             return ResponseEntity.badRequest()
                     .body("Voter not found.");
         }
@@ -85,9 +94,7 @@ public class VoteController {
                     .body("Election not found.");
         }
 
-        LocalDateTime now = LocalDateTime.now(
-                ZoneId.of("Asia/Kolkata")
-        );
+        LocalDateTime now = LocalDateTime.now(ELECTION_ZONE);
 
         if (election.getStartTime() == null ||
                 election.getEndTime() == null ||
@@ -107,9 +114,7 @@ public class VoteController {
                     .body("Position not found.");
         }
 
-        if (!position.getElectionId()
-                .equals(vote.getElectionId())) {
-
+        if (!vote.getElectionId().equals(position.getElectionId())) {
             return ResponseEntity.badRequest()
                     .body("This position does not belong to the selected election.");
         }
@@ -123,16 +128,12 @@ public class VoteController {
                     .body("Candidate not found.");
         }
 
-        if (!candidate.getElectionId()
-                .equals(vote.getElectionId())) {
-
+        if (!vote.getElectionId().equals(candidate.getElectionId())) {
             return ResponseEntity.badRequest()
                     .body("This candidate does not belong to the selected election.");
         }
 
-        if (!candidate.getPositionId()
-                .equals(vote.getPositionId())) {
-
+        if (!vote.getPositionId().equals(candidate.getPositionId())) {
             return ResponseEntity.badRequest()
                     .body("This candidate does not belong to the selected position.");
         }
@@ -153,6 +154,10 @@ public class VoteController {
         vote.setVotedAt(now);
 
         Vote savedVote = voteRepository.save(vote);
+
+        // Means the voter has cast at least one vote across all elections.
+        voter.setHasVoted(true);
+        voterRepository.save(voter);
 
         return ResponseEntity.ok(savedVote);
     }
